@@ -1,14 +1,35 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Pin, Users } from 'lucide-react';
 import clsx from 'clsx';
 import Avatar from '../ui/Avatar';
 
 const GroupCard = ({ group, onTogglePin }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/groups/${group._id}`);
+  };
+
+  const handlePinClick = (e) => {
+    // Prevent the click from bubbling up to the card and triggering navigation.
+    e.stopPropagation();
+    onTogglePin(group._id);
+  };
+
   return (
-    <motion.div whileHover={{ y: -3 }} className="glass-card p-5 transition-shadow hover:shadow-card-hover">
+    <motion.div
+      whileHover={{ y: -3 }}
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleCardClick();
+      }}
+      className="glass-card p-5 transition-shadow hover:shadow-card-hover cursor-pointer"
+    >
       <div className="flex items-start justify-between mb-4">
-        <Link to={`/groups/${group._id}`} className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <Avatar name={group.name} src={group.image} size="md" />
           <div className="min-w-0">
             <h3 className="font-display text-sm font-semibold text-ink-100 truncate">{group.name}</h3>
@@ -16,9 +37,9 @@ const GroupCard = ({ group, onTogglePin }) => {
               <Users className="h-3 w-3" /> {group.memberCount} members
             </p>
           </div>
-        </Link>
+        </div>
         <button
-          onClick={() => onTogglePin(group._id)}
+          onClick={handlePinClick}
           className={clsx(
             'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors',
             group.isPinned ? 'text-amber-400 bg-amber-500/10' : 'text-ink-600 hover:text-ink-300 hover:bg-white/[0.05]'
