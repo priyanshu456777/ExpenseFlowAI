@@ -29,7 +29,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status !== 401 || originalRequest._retry || originalRequest.url.includes('/auth/')) {
+    const isExemptAuthRoute = ['/auth/refresh', '/auth/login', '/auth/register'].some((path) =>
+      originalRequest.url.includes(path)
+    );
+
+    if (error.response?.status !== 401 || originalRequest._retry || isExemptAuthRoute) {
       return Promise.reject(error);
     }
 
