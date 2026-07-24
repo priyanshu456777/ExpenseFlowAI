@@ -64,7 +64,7 @@ const NotificationBell = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] glass-card p-2 z-50"
+            className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-base-800 border border-white/[0.08] rounded-2xl shadow-card p-2 z-50"
           >
             <div className="flex items-center justify-between px-2 py-2">
               <span className="text-sm font-semibold text-ink-100">Notifications</span>
