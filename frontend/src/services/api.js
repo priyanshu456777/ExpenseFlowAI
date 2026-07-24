@@ -29,11 +29,16 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    const isExemptAuthRoute = ['/auth/refresh', '/auth/login', '/auth/register'].some((path) =>
-      originalRequest.url.includes(path)
-    );
+    // Only the refresh call itself (and login/register, which never had a valid
+    // session to begin with) should skip the retry-with-refresh flow. Other
+    // /auth/* routes like /auth/me or /auth/update-password are protected
+    // endpoints that legitimately need a silent refresh on token expiry.
+    const isAuthBootstrapRoute =
+      originalRequest.url.includes('/auth/refresh') ||
+      originalRequest.url.includes('/auth/login') ||
+      originalRequest.url.includes('/auth/register');
 
-    if (error.response?.status !== 401 || originalRequest._retry || isExemptAuthRoute) {
+    if (error.response?.status !== 401 || originalRequest._retry || isAuthBootstrapRoute) {
       return Promise.reject(error);
     }
 
