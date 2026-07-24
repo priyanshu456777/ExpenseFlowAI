@@ -52,9 +52,7 @@ const DashboardLayout = () => {
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="[&>aside]:hidden [&_aside]:!static [&_aside]:!flex [&_aside]:!w-full">
-                <Sidebar />
-              </div>
+              <Sidebar mobile />
             </motion.div>
           </>
         )}

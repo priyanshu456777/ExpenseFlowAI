@@ -41,7 +41,7 @@ const ProfileMenu = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-56 glass-card p-1.5 z-50"
+            className="absolute right-0 mt-2 w-56 bg-base-800 border border-white/[0.08] rounded-2xl shadow-card p-1.5 z-50"
           >
             <div className="px-3 py-2.5 border-b border-white/[0.06] mb-1">
               <p className="text-sm font-medium text-ink-100 truncate">{user?.name}</p>

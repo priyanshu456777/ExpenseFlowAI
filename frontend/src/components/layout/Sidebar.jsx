@@ -23,11 +23,21 @@ const NAV_ITEMS = [
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ mobile = false }) => {
   const { user, isAdmin, logout } = useAuth();
 
+  // Desktop: fixed, translucent, hidden below the lg breakpoint (Topbar's
+  // hamburger button opens the mobile drawer instead).
+  // Mobile (inside the drawer in DashboardLayout): plain full-width flex
+  // column, solid background, no fixed positioning — the drawer's own
+  // motion.div already handles positioning/animation, so Sidebar just needs
+  // to fill it and be fully opaque (readable over the dashboard behind it).
+  const asideClasses = mobile
+    ? 'flex w-full flex-col bg-base-800'
+    : 'hidden lg:flex lg:w-64 lg:flex-col fixed inset-y-0 left-0 z-30 border-r border-white/[0.06] bg-base-800/40 backdrop-blur-xl';
+
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:flex-col fixed inset-y-0 left-0 z-30 border-r border-white/[0.06] bg-base-800/40 backdrop-blur-xl">
+    <aside className={asideClasses}>
       <div className="flex items-center gap-2 px-6 h-16 border-b border-white/[0.06]">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand">
           <Wallet className="h-4 w-4 text-white" strokeWidth={2.5} />
