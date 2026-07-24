@@ -31,13 +31,15 @@ const DashboardLayout = () => {
         {mobileNavOpen && (
           <>
             <motion.div
+              key="mobile-nav-backdrop"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              animate={{ opacity: 1, pointerEvents: 'auto' }}
+              exit={{ opacity: 0, pointerEvents: 'none' }}
               onClick={() => setMobileNavOpen(false)}
               className="fixed inset-0 z-40 bg-black/60 lg:hidden"
             />
             <motion.div
+              key="mobile-nav-drawer"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
