@@ -71,13 +71,19 @@ const DashboardPage = () => {
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <motion.div custom={0} initial="hidden" animate="visible" variants={fadeUp}>
-            <StatCard label="This month" value={stats?.monthlyTotal?.toFixed(2) || '0.00'} prefix="$" icon={Wallet} accent="indigo" />
+            <StatCard
+              label="This month"
+              value={stats?.monthlyTotal?.toFixed(2) || '0.00'}
+              prefix={`${user?.currency || 'USD'} `}
+              icon={Wallet}
+              accent="indigo"
+            />
           </motion.div>
           <motion.div custom={1} initial="hidden" animate="visible" variants={fadeUp}>
             <StatCard
               label="You owe"
               value={stats?.totalYouOwe?.toFixed(2) || '0.00'}
-              prefix="$"
+              prefix={`${user?.currency || 'USD'} `}
               icon={TrendingDown}
               accent="rose"
             />
@@ -86,7 +92,7 @@ const DashboardPage = () => {
             <StatCard
               label="You've paid"
               value={stats?.totalYouPaid?.toFixed(2) || '0.00'}
-              prefix="$"
+              prefix={`${user?.currency || 'USD'} `}
               icon={TrendingUp}
               accent="emerald"
             />
