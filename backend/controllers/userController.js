@@ -25,7 +25,8 @@ const updateProfile = catchAsync(async (req, res) => {
   });
 
   if (req.file) {
-    updates.avatar = `/uploads/avatars/${req.file.filename}`;
+    const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+    updates.avatar = `${baseUrl}/uploads/avatars/${req.file.filename}`;
   }
 
   const user = await User.findByIdAndUpdate(req.user._id, updates, {

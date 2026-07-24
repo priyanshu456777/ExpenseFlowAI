@@ -44,8 +44,20 @@ const setAuthCookies = (res, userId, rememberMe = false) => {
 };
 
 const clearAuthCookies = (res) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken', { path: '/api/v1/auth/refresh' });
+  const isProd = process.env.NODE_ENV === 'production';
+
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+  });
+
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/api/v1/auth/refresh',
+  });
 };
 
 module.exports = {
