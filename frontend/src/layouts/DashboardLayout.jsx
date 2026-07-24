@@ -54,7 +54,7 @@ const DashboardLayout = () => {
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <Sidebar mobile />
+              <Sidebar mobile onNavigate={() => setMobileNavOpen(false)} />
             </motion.div>
           </>
         )}

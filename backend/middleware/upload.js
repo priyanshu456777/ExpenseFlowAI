@@ -11,12 +11,24 @@ const ensureDir = (dir) => {
 const UPLOAD_ROOT = path.join(__dirname, '..', 'uploads');
 ['avatars', 'groups', 'receipts'].forEach((sub) => ensureDir(path.join(UPLOAD_ROOT, sub)));
 
+// Maps validated MIME types to the extension we save with, so the extension
+// on disk is derived from the (fileFilter-checked) mimetype rather than the
+// client-supplied original filename, which can claim any extension it wants
+// regardless of the file's real content.
+const EXTENSION_BY_MIME_TYPE = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif',
+  'application/pdf': '.pdf',
+};
+
 const storage = (subfolder) =>
   multer.diskStorage({
     destination: (req, file, cb) => cb(null, path.join(UPLOAD_ROOT, subfolder)),
     filename: (req, file, cb) => {
       const uniqueSuffix = crypto.randomBytes(16).toString('hex');
-      const ext = path.extname(file.originalname).toLowerCase();
+      const ext = EXTENSION_BY_MIME_TYPE[file.mimetype] || '.bin';
       cb(null, `${subfolder}-${uniqueSuffix}${ext}`);
     },
   });

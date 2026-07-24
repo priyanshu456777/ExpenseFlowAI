@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
+const sanitizeRequest = require('./middleware/sanitize');
 const rateLimit = require('express-rate-limit');
 
 const authRoutes = require('./routes/authRoutes');
@@ -56,7 +56,7 @@ app.use(cookieParser());
 
 // ---------- Data sanitization ----------
 app.use(mongoSanitize()); // Prevents NoSQL injection (strips $ and . from req data)
-app.use(xss()); // Cleans user input from malicious HTML/JS
+app.use(sanitizeRequest); // Cleans user input from malicious HTML/JS
 
 // ---------- Logging ----------
 if (process.env.NODE_ENV === 'development') {

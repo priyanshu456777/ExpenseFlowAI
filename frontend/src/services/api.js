@@ -19,6 +19,16 @@ const processQueue = (error) => {
 };
 
 /**
+ * True for a "Network Error" — axios/the browser never got a response at all
+ * (request timed out, connection was refused/reset, DNS failed, etc). This is
+ * distinct from the server responding with an error status like 401/500. Free
+ * hosting tiers for the backend (e.g. Render) spin the service down when idle
+ * and can take several seconds to wake up on the very first request after a
+ * period of inactivity, which surfaces to axios as exactly this kind of error.
+ */
+const isNetworkError = (error) => !error.response && error.code !== 'ERR_CANCELED';
+
+/**
  * On a 401, attempt exactly one silent token refresh, then retry the original
  * request. If the refresh itself fails, redirect to login. Concurrent 401s
  * while a refresh is already in flight are queued and retried together once
@@ -28,6 +38,16 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    // Retry a bare network error exactly once after a short delay before
+    // giving up. This masks transient blips and, more importantly, gives a
+    // sleeping backend (e.g. Render's free tier) a chance to wake up instead
+    // of failing the user's very first request outright.
+    if (originalRequest && isNetworkError(error) && !originalRequest._networkRetry) {
+      originalRequest._networkRetry = true;
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      return api(originalRequest);
+    }
 
     // Only the refresh call itself (and login/register, which never had a valid
     // session to begin with) should skip the retry-with-refresh flow. Other
@@ -75,7 +95,12 @@ api.interceptors.response.use(
  * Extracts a human-readable message from an API error response, falling back
  * to a generic message so the UI never shows "undefined" to the user.
  */
-export const getErrorMessage = (error) =>
-  error?.response?.data?.message || error?.message || 'Something went wrong. Please try again.';
+export const getErrorMessage = (error) => {
+  if (error?.response?.data?.message) return error.response.data.message;
+  if (isNetworkError(error)) {
+    return "Can't reach the server right now. Please check your connection and try again in a few seconds.";
+  }
+  return error?.message || 'Something went wrong. Please try again.';
+};
 
 export default api;

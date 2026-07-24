@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
-const Sidebar = ({ mobile = false }) => {
+const Sidebar = ({ mobile = false, onNavigate }) => {
   const { user, isAdmin, logout } = useAuth();
 
   // Desktop: fixed, translucent, hidden below the lg breakpoint (Topbar's
@@ -50,6 +50,7 @@ const Sidebar = ({ mobile = false }) => {
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={onNavigate}
             className={({ isActive }) =>
               `relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors ${
                 isActive ? 'text-ink-100' : 'text-ink-400 hover:text-ink-100 hover:bg-white/[0.04]'
@@ -75,6 +76,7 @@ const Sidebar = ({ mobile = false }) => {
         {isAdmin && (
           <NavLink
             to="/admin"
+            onClick={onNavigate}
             className={({ isActive }) =>
               `relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors ${
                 isActive ? 'text-violet-300 bg-violet-500/10' : 'text-ink-400 hover:text-ink-100 hover:bg-white/[0.04]'
