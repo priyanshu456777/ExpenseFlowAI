@@ -57,9 +57,13 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError);
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
+      // Don't hard-redirect here. This code runs for ANY failed request on ANY
+      // page — including the public landing page, where a logged-out visitor
+      // has no session at all and a 401 from /auth/me is completely normal.
+      // Just tell the app "the session is gone"; AuthContext clears the user,
+      // and ProtectedRoute (routes/guards.jsx) reactively sends logged-in-only
+      // pages to /login via React Router — without reloading public pages.
+      window.dispatchEvent(new Event('auth:session-expired'));
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

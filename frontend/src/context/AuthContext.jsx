@@ -23,6 +23,19 @@ export const AuthProvider = ({ children }) => {
     fetchCurrentUser();
   }, [fetchCurrentUser]);
 
+  // Fired by services/api.js when a silent token refresh fails (session truly
+  // gone). We just clear the user here — we do NOT navigate. Protected routes
+  // pick this up via ProtectedRoute (isAuthenticated becomes false) and redirect
+  // client-side; public pages like the landing page simply stay put.
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setUser(null);
+      setIsLoading(false);
+    };
+    window.addEventListener('auth:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('auth:session-expired', handleSessionExpired);
+  }, []);
+
   const login = async (credentials) => {
     const { data } = await authService.login(credentials);
     setUser(data.user);
