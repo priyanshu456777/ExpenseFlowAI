@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme (default) */
+    --color-base-950: 229 231 235;
+    --color-base-900: 249 250 251;
+    --color-base-800: 255 255 255;
+    --color-base-700: 243 244 246;
+    --color-base-600: 226 232 240;
+    --color-base-500: 148 163 184;
+    --color-ink-100: 17 24 39;
+    --color-ink-300: 55 65 81;
+    --color-ink-400: 75 85 99;
+    --color-ink-500: 100 116 139;
+  }
+
+  .dark {
+    /* Dark theme (matches the app's original palette) */
+    --color-base-950: 8 12 20;
+    --color-base-900: 11 18 32;
+    --color-base-800: 17 24 39;
+    --color-base-700: 26 35 51;
+    --color-base-600: 31 41 55;
+    --color-base-500: 45 59 78;
+    --color-ink-100: 243 244 246;
+    --color-ink-300: 199 205 214;
+    --color-ink-400: 156 163 175;
+    --color-ink-500: 107 118 132;
+  }
+
+  * {
+    @apply border-base-600;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-base-900 transition-colors duration-200;
+  }
+  ::selection {
+    @apply bg-indigo-500/30 text-white;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-base-600 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-base-500;
+  }
+
+  /* Financial figures use tabular (monospace-numeral) formatting so amounts align in columns */
+  .figure {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* Respect reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Visible keyboard focus ring across the app */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid #818cf8;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-base-800/60 backdrop-blur-xl border border-white/[0.06] rounded-2xl shadow-card;
+  }
+
+  .glass-panel {
+    @apply bg-base-800/40 backdrop-blur-md border border-white/[0.05] rounded-xl;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-2.5 text-sm font-semibold text-ink-100 transition-colors duration-200 hover:bg-white/[0.07] disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-ink-400 transition-colors duration-200 hover:text-ink-100 hover:bg-white/[0.05];
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-rose-500/10 border border-rose-500/30 px-5 py-2.5 text-sm font-semibold text-rose-400 transition-colors duration-200 hover:bg-rose-500/20;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-white/10 bg-base-900/60 px-4 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 transition-colors duration-200 focus:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20;
+  }
+
+  .label-text {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-400;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-base-700 rounded-lg;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+  .badge-indigo {
+    @apply badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20;
+  }
+  .badge-emerald {
+    @apply badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
+  }
+  .badge-rose {
+    @apply badge bg-rose-500/10 text-rose-400 border border-rose-500/20;
+  }
+  .badge-amber {
+    @apply badge bg-amber-500/10 text-amber-400 border border-amber-500/20;
+  }
+}

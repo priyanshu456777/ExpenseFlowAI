@@ -1,0 +1,12 @@
+node_modules/
+.env
+uploads/avatars/*
+uploads/groups/*
+uploads/receipts/*
+!uploads/avatars/.gitkeep
+!uploads/groups/.gitkeep
+!uploads/receipts/.gitkeep
+logs/*.log
+npm-debug.log*
+.DS_Store
+*.log
