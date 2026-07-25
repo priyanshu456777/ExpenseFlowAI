@@ -123,6 +123,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
       html: passwordResetTemplate(resetUrl, user.name),
     });
   } catch (err) {
+    console.error(`[forgotPassword] Reset email failed for ${user.email}: ${err.message}`);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });

@@ -1,35 +1,70 @@
-const nodemailer = require('nodemailer');
+/**
+ * Email sending via the Resend HTTP API (https://resend.com).
+ *
+ * Why not SMTP: Render's free web services block outbound traffic on SMTP
+ * ports 25, 465 and 587 (since Sept 2025). Any nodemailer/SMTP setup will
+ * silently time out on Render's free tier no matter how correct the
+ * credentials are. Resend sends over plain HTTPS (port 443), which is never
+ * blocked, so it works on free hosting too.
+ */
 
-const createTransporter = () =>
-  nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+const RESEND_API_URL = 'https://api.resend.com/emails';
+
+// Values that are still the unedited placeholders from .env.example.
+const PLACEHOLDER_VALUES = new Set(['your_resend_api_key', 're_xxxxxxxxxxxxxxxxxxxxxxxxxxxx']);
 
 /**
- * Sends an email. Fails silently with a logged error in development if SMTP
- * isn't configured, so local development isn't blocked by missing credentials.
+ * Validates that the Resend API key has actually been configured (not left
+ * as a placeholder, and not missing entirely). Throws a clear, specific
+ * error instead of letting the API call fail with a confusing 401.
+ */
+const assertResendConfigured = () => {
+  const { RESEND_API_KEY } = process.env;
+
+  if (!RESEND_API_KEY) {
+    throw new Error(
+      'RESEND_API_KEY is not set. Sign up at https://resend.com, create an API key, and set ' +
+        'RESEND_API_KEY in your environment variables.'
+    );
+  }
+
+  if (PLACEHOLDER_VALUES.has(RESEND_API_KEY)) {
+    throw new Error('RESEND_API_KEY is still set to a placeholder value. Replace it with your real Resend API key.');
+  }
+};
+
+/**
+ * Sends an email via the Resend API. Always throws on failure (in every
+ * environment) so the caller can react correctly and the real cause is
+ * never hidden behind a fake "success" response to the client.
  */
 const sendEmail = async ({ to, subject, html, text }) => {
   try {
-    const transporter = createTransporter();
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM || 'ExpenseFlow AI <no-reply@expenseflow.ai>',
-      to,
-      subject,
-      html,
-      text,
+    assertResendConfigured();
+
+    const response = await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: process.env.EMAIL_FROM || 'ExpenseFlow AI <onboarding@resend.dev>',
+        to,
+        subject,
+        html,
+        text,
+      }),
     });
-  } catch (error) {
-    console.error(`[EmailService] Failed to send email to ${to}: ${error.message}`);
-    if (process.env.NODE_ENV === 'production') {
-      throw error;
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(`Resend API responded with ${response.status}: ${errorBody}`);
     }
+  } catch (error) {
+    // Full detail goes to the server logs only — never exposed to the client.
+    console.error(`[EmailService] Failed to send email to ${to}: ${error.message}`);
+    throw error;
   }
 };
 
