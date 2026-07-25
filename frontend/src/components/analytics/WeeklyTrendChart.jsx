@@ -1,6 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, currency }) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
@@ -8,12 +8,14 @@ const CustomTooltip = ({ active, payload }) => {
       <p className="text-ink-100 font-medium">
         Week {d.week}, {d.year}
       </p>
-      <p className="text-emerald-400 figure">${payload[0].value.toFixed(2)}</p>
+      <p className="text-emerald-400 figure">
+        {currency} {payload[0].value.toFixed(2)}
+      </p>
     </div>
   );
 };
 
-const WeeklyTrendChart = ({ data }) => {
+const WeeklyTrendChart = ({ data, currency = 'USD' }) => {
   if (!data || data.length === 0) {
     return <p className="text-sm text-ink-500 text-center py-16">No weekly data yet.</p>;
   }
@@ -30,7 +32,7 @@ const WeeklyTrendChart = ({ data }) => {
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
         <XAxis dataKey="week" tick={{ fill: '#6B7684', fontSize: 11 }} axisLine={false} tickLine={false} />
         <YAxis tick={{ fill: '#6B7684', fontSize: 11 }} axisLine={false} tickLine={false} />
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip currency={currency} />} />
         <Area type="monotone" dataKey="total" stroke="#10B981" strokeWidth={2} fill="url(#areaGradient)" />
       </AreaChart>
     </ResponsiveContainer>

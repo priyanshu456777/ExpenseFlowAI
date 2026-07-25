@@ -108,7 +108,7 @@ const DashboardPage = () => {
         <div className="lg:col-span-2 glass-card p-6">
           <h2 className="font-display text-base font-semibold text-ink-100 mb-1">Spending by category</h2>
           <p className="text-xs text-ink-500 mb-4">This month, across all groups</p>
-          <CategoryPieChart data={stats?.categoryTotals} />
+          <CategoryPieChart data={stats?.categoryTotals} currency={user?.currency || 'USD'} />
         </div>
 
         {/* Financial health + quick actions */}

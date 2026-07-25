@@ -91,18 +91,30 @@ const AnalyticsPage = () => {
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 glass-card p-6">
           <h2 className="font-display text-sm font-semibold text-ink-100 mb-4">Monthly spending (last 6 months)</h2>
-          {monthlyLoading ? <CardSkeleton /> : <MonthlyBarChart data={monthlyData?.data?.data} />}
+          {monthlyLoading ? (
+            <CardSkeleton />
+          ) : (
+            <MonthlyBarChart data={monthlyData?.data?.data} currency={selectedGroup?.currency || 'USD'} />
+          )}
         </div>
         <div className="glass-card p-6">
           <h2 className="font-display text-sm font-semibold text-ink-100 mb-4">Category breakdown</h2>
-          {categoryLoading ? <CardSkeleton /> : <CategoryPieChart data={categoryData?.data?.data} />}
+          {categoryLoading ? (
+            <CardSkeleton />
+          ) : (
+            <CategoryPieChart data={categoryData?.data?.data} currency={selectedGroup?.currency || 'USD'} />
+          )}
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="glass-card p-6">
           <h2 className="font-display text-sm font-semibold text-ink-100 mb-4">Weekly trend (last 8 weeks)</h2>
-          {weeklyLoading ? <CardSkeleton /> : <WeeklyTrendChart data={weeklyData?.data?.data} />}
+          {weeklyLoading ? (
+            <CardSkeleton />
+          ) : (
+            <WeeklyTrendChart data={weeklyData?.data?.data} currency={selectedGroup?.currency || 'USD'} />
+          )}
         </div>
         <div className="glass-card p-6">
           <h2 className="font-display text-sm font-semibold text-ink-100 mb-4">Top contributors</h2>

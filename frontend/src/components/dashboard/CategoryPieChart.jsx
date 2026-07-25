@@ -2,18 +2,20 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 
 const COLORS = ['#6366F1', '#8B5CF6', '#10B981', '#F59E0B', '#F43F5E', '#818CF8', '#34D399', '#FB7185'];
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, currency }) => {
   if (!active || !payload?.length) return null;
   const item = payload[0];
   return (
     <div className="glass-card px-3 py-2 text-xs">
       <p className="text-ink-100 font-medium">{item.name}</p>
-      <p className="text-ink-400 figure">${item.value.toFixed(2)}</p>
+      <p className="text-ink-400 figure">
+        {currency} {item.value.toFixed(2)}
+      </p>
     </div>
   );
 };
 
-const CategoryPieChart = ({ data }) => {
+const CategoryPieChart = ({ data, currency = 'USD' }) => {
   if (!data || data.length === 0) {
     return <p className="text-sm text-ink-500 text-center py-16">No category data yet.</p>;
   }
@@ -38,7 +40,7 @@ const CategoryPieChart = ({ data }) => {
             <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip currency={currency} />} />
         <Legend
           verticalAlign="bottom"
           height={48}
